@@ -116,6 +116,19 @@ public class AutoCareApp {
                             // Dynamic Binding
                             daftarKendaraan[i].tampilkanInfo();
                             simulasiServis(daftarKendaraan[i]); // Upcasting
+                            daftarKendaraan[i].hitungEstimasiBiayaServis();
+
+                            // operator instanceof
+                            if (daftarKendaraan[i] instanceof DapatDicuci) {
+                                DapatDicuci itemBisaDicuci = (DapatDicuci) daftarKendaraan[i];
+                                itemBisaDicuci.prosesCuci();
+                            }
+
+                            if (daftarKendaraan[i] instanceof DapatGaransi) {
+                                DapatGaransi itemBisaGaransi = (DapatGaransi) daftarKendaraan[i];
+                                itemBisaGaransi.klaimGaransi(30);
+                            }
+                            
                             System.out.println();
                         }
                         System.out.println("* Total Antrean Terdaftar: " + Kendaraan.totalServisBerhasilDibuat);
