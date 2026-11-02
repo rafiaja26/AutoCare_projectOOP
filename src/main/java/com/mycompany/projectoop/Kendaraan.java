@@ -1,13 +1,16 @@
 package com.mycompany.projectoop;
 
-public class Kendaraan {
+public abstract class Kendaraan {
     private String platNomor;
     private String pemilik;
     private int tahun;
 
     public static int totalServisBerhasilDibuat = 0;
 
-    public Kendaraan(String platNomor, String pemilik, int tahun) {
+    public Kendaraan(String platNomor, String pemilik, int tahun) throws Exception {
+        if (tahun <= 0) {
+            throw new Exception("Tahun terbit/produksi tidak valid (tidak boleh nol atau negatif)!");
+        }
         this.platNomor = platNomor;
         this.pemilik = pemilik;
         this.tahun = tahun;
@@ -50,4 +53,6 @@ public class Kendaraan {
     public void layananServis() {
         System.out.println("-> Servis standar kendaraan dilakukan.");
     }
+
+    public abstract void hitungEstimasiBiayaServis();
 }

@@ -1,51 +1,38 @@
 package com.mycompany.projectoop;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class AutoCareApp {
 
-    // Compile-Time Polymorphism (Method Overloading)
-    public static void cariKendaraan(String platNomor, Kendaraan[] daftar, int jumlah) {
-        System.out.println("\n--- Hasil Pencarian Plat (Teks): " + platNomor + " ---");
+    public static void cariKendaraan(String platNomor, ArrayList<Kendaraan> daftarKendaraan) throws KendaraanTidakDitemukanException {
+        System.out.println("Mencari Kendaraan dengan Plat: " + platNomor);
         boolean ditemukan = false;
-        for (int i = 0; i < jumlah; i++) {
-            if (daftar[i].getPlatNomor().equalsIgnoreCase(platNomor)) {
-                System.out.print("- Ditemukan: ");
-                daftar[i].tampilkanInfo();
-                simulasiServis(daftar[i]); // Upcasting & Dynamic Binding
+
+        for (int i = 0; i < daftarKendaraan.size(); i++) {
+            if (daftarKendaraan.get(i).getPlatNomor().equalsIgnoreCase(platNomor)) {
+                daftarKendaraan.get(i).tampilkanInfo();
                 ditemukan = true;
             }
         }
+
         if (!ditemukan) {
-            System.out.println("Kendaraan tidak ditemukan.");
+            throw new KendaraanTidakDitemukanException("Gagal: Kendaraan dengan plat '" + platNomor + "' tidak terdaftar di sistem.");
         }
     }
 
-    public static void cariKendaraan(int tahun, Kendaraan[] daftar, int jumlah) {
-        System.out.println("\n--- Hasil Pencarian Tahun (Angka): " + tahun + " ---");
-        boolean ditemukan = false;
-        for (int i = 0; i < jumlah; i++) {
-            if (daftar[i].getTahun() == tahun) {
-                System.out.print("- Ditemukan: ");
-                daftar[i].tampilkanInfo();
-                ditemukan = true;
-            }
-        }
-        if (!ditemukan) {
-            System.out.println("Kendaraan tidak ditemukan.");
-        }
-    }
-
-    // Runtime Polymorphism & Dynamic Binding lewat Upcasting
     public static void simulasiServis(Kendaraan item) {
         item.layananServis();
     }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        // Array bertipe Superclass (Polymorphic Array
-        Kendaraan[] daftarKendaraan = new Kendaraan[10];
-        int jumlahKendaraan = 0;
+
+        ArrayList<Kendaraan> daftarKendaraan = new ArrayList<>();
+        HashMap<String, String> dataPelanggan = new HashMap<>();
+
         boolean isRunning = true;
 
         System.out.println("==============================================");
@@ -54,18 +41,19 @@ public class AutoCareApp {
 
         while (isRunning) {
             System.out.println("\nMenu Utama:");
-            System.out.println("1. Tambah Antrean Servis");
+            System.out.println("1. Tambah Antrean Servis (ArrayList)");
             System.out.println("2. Lihat Daftar Kendaraan & Servis");
-            System.out.println("3. Cari Kendaraan");
-            System.out.println("4. Keluar");
-            System.out.print("Pilih Menu (1-4): ");
+            System.out.println("3. Cari Kendaraan (Demo Custom Exception)");
+            System.out.println("4. Manajemen Pelanggan (Demo HashMap)");
+            System.out.println("5. Keluar");
+            System.out.print("Pilih Menu (1-5): ");
 
-            int pilihan = scanner.nextInt();
-            scanner.nextLine();
+            try {
+                int pilihan = scanner.nextInt();
+                scanner.nextLine();
 
-            switch (pilihan) {
-                case 1:
-                    if (jumlahKendaraan < daftarKendaraan.length) {
+                switch (pilihan) {
+                    case 1:
                         System.out.println("\n-- Pilih Jenis Kendaraan --");
                         System.out.println("1. Mobil");
                         System.out.println("2. Motor");
@@ -82,93 +70,113 @@ public class AutoCareApp {
                         int tahun = scanner.nextInt();
                         scanner.nextLine();
 
-                        // Polymorphism
                         if (jenis == 1) {
                             System.out.print("Masukkan Jumlah Pintu: ");
                             int pintu = scanner.nextInt();
                             scanner.nextLine();
-                            daftarKendaraan[jumlahKendaraan] = new Mobil(plat, pemilik, tahun, pintu);
+                            daftarKendaraan.add(new Mobil(plat, pemilik, tahun, pintu));
                         } else if (jenis == 2) {
                             System.out.print("Masukkan Tipe Transmisi (Matic/Manual): ");
                             String transmisi = scanner.nextLine();
-                            daftarKendaraan[jumlahKendaraan] = new Motor(plat, pemilik, tahun, transmisi);
+                            daftarKendaraan.add(new Motor(plat, pemilik, tahun, transmisi));
                         } else if (jenis == 3) {
                             System.out.print("Masukkan Kapasitas Penumpang: ");
                             int kapasitas = scanner.nextInt();
                             scanner.nextLine();
-                            daftarKendaraan[jumlahKendaraan] = new Bus(plat, pemilik, tahun, kapasitas);
+                            daftarKendaraan.add(new Bus(plat, pemilik, tahun, kapasitas));
                         }
 
-                        jumlahKendaraan++;
-                        System.out.println("Sukses! Kendaraan berhasil ditambahkan.");
-                    } else {
-                        System.out.println("Maaf, kapasitas bengkel penuh!");
-                    }
-                    break;
+                        System.out.println("Sukses! Kendaraan berhasil ditambahkan. (Total Antrean: " + daftarKendaraan.size() + ")");
+                        break;
 
-                case 2:
-                    System.out.println("\n--- Daftar Kendaraan di Bengkel ---");
-                    if (jumlahKendaraan == 0) {
-                        System.out.println("Belum ada kendaraan yang tersimpan.");
-                    } else {
-                        for (int i = 0; i < jumlahKendaraan; i++) {
-                            System.out.print((i + 1) + ". ");
-                            // Dynamic Binding
-                            daftarKendaraan[i].tampilkanInfo();
-                            simulasiServis(daftarKendaraan[i]); // Upcasting
-                            daftarKendaraan[i].hitungEstimasiBiayaServis();
+                    case 2:
+                        System.out.println("\n--- Daftar Kendaraan di Bengkel ---");
+                        if (daftarKendaraan.isEmpty()) {
+                            System.out.println("Belum ada kendaraan yang tersimpan.");
+                        } else {
+                            for (int i = 0; i < daftarKendaraan.size(); i++) {
+                                System.out.print((i + 1) + ". ");
+                                daftarKendaraan.get(i).tampilkanInfo();
+                                simulasiServis(daftarKendaraan.get(i));
+                                daftarKendaraan.get(i).hitungEstimasiBiayaServis();
 
-                            // operator instanceof
-                            if (daftarKendaraan[i] instanceof DapatDicuci) {
-                                DapatDicuci itemBisaDicuci = (DapatDicuci) daftarKendaraan[i];
-                                itemBisaDicuci.prosesCuci();
+                                if (daftarKendaraan.get(i) instanceof DapatDicuci) {
+                                    DapatDicuci itemBisaDicuci = (DapatDicuci) daftarKendaraan.get(i);
+                                    itemBisaDicuci.prosesCuci();
+                                }
+                                if (daftarKendaraan.get(i) instanceof DapatGaransi) {
+                                    DapatGaransi itemBisaGaransi = (DapatGaransi) daftarKendaraan.get(i);
+                                    itemBisaGaransi.klaimGaransi(30);
+                                }
+                                System.out.println();
                             }
-
-                            if (daftarKendaraan[i] instanceof DapatGaransi) {
-                                DapatGaransi itemBisaGaransi = (DapatGaransi) daftarKendaraan[i];
-                                itemBisaGaransi.klaimGaransi(30);
-                            }
-                            
-                            System.out.println();
+                            System.out.println("* Total Antrean Terdaftar: " + Kendaraan.totalServisBerhasilDibuat);
                         }
-                        System.out.println("* Total Antrean Terdaftar: " + Kendaraan.totalServisBerhasilDibuat);
-                    }
-                    System.out.print("Tekan Enter untuk melanjutkan...");
-                    scanner.nextLine();
-                    break;
+                        break;
 
-                case 3:
-                    System.out.println("\n-- Fitur Cari Kendaraan --");
-                    System.out.println("1. Cari berdasarkan Plat Nomor (String)");
-                    System.out.println("2. Cari berdasarkan Tahun Produksi (Integer)");
-                    System.out.print("Pilih (1/2): ");
-                    int modeCari = scanner.nextInt();
-                    scanner.nextLine();
-
-                    if (modeCari == 1) {
+                    case 3:
+                        System.out.println("\n-- Fitur Cari Kendaraan --");
                         System.out.print("Masukkan Plat Nomor: ");
                         String kataKunci = scanner.nextLine();
-                        cariKendaraan(kataKunci, daftarKendaraan, jumlahKendaraan); // Compile-time Polymorphism
-                    } else if (modeCari == 2) {
-                        System.out.print("Masukkan Tahun: ");
-                        int angkaKunci = scanner.nextInt();
+
+                        try {
+                            cariKendaraan(kataKunci, daftarKendaraan);
+                        } catch (KendaraanTidakDitemukanException e) {
+                            System.out.println("Peringatan: " + e.getMessage());
+                        } finally {
+                            System.out.println("-> Sesi pencarian selesai dieksekusi.");
+                        }
+                        break;
+
+                    case 4:
+                        System.out.println("\n-- Kelola Pelanggan (HashMap) --");
+                        System.out.println("1. Tambah Pelanggan Baru");
+                        System.out.println("2. Cari Pelanggan via No KTP/ID");
+                        System.out.println("3. Tampilkan Semua Pelanggan");
+                        System.out.print("Pilih: ");
+                        int menuPelanggan = scanner.nextInt();
                         scanner.nextLine();
-                        cariKendaraan(angkaKunci, daftarKendaraan, jumlahKendaraan); // Compile-time Polymorphism
-                    } else {
-                        System.out.println("Pilihan tidak valid.");
-                    }
 
-                    System.out.print("Tekan Enter untuk melanjutkan...");
-                    scanner.nextLine();
-                    break;
+                        if (menuPelanggan == 1) {
+                            System.out.print("Masukkan No KTP/ID (sebagai Key): ");
+                            String id = scanner.nextLine();
+                            System.out.print("Masukkan Nama Lengkap (sebagai Value): ");
+                            String nama = scanner.nextLine();
 
-                case 4:
-                    System.out.println("Terima kasih telah menggunakan AutoCare System!");
-                    isRunning = false;
-                    break;
+                            dataPelanggan.put(id, nama);
+                            System.out.println("Berhasil menambahkan pelanggan!");
+                        } else if (menuPelanggan == 2) {
+                            System.out.print("Masukkan No KTP/ID yang dicari: ");
+                            String searchId = scanner.nextLine();
 
-                default:
-                    System.out.println("Pilihan tidak valid. Silakan masukkan angka 1-4.");
+                            if (dataPelanggan.containsKey(searchId)) {
+                                System.out.println("Ditemukan! Nama: " + dataPelanggan.get(searchId));
+                            } else {
+                                System.out.println("Pelanggan dengan No KTP/ID tersebut tidak terdaftar.");
+                            }
+                        } else if (menuPelanggan == 3) {
+                            System.out.println("Total Pelanggan Terdaftar: " + dataPelanggan.size());
+                            for (String keyId : dataPelanggan.keySet()) {
+                                System.out.println("- No KTP/ID: " + keyId + " | Nama: " + dataPelanggan.get(keyId));
+                            }
+                        }
+                        break;
+
+                    case 5:
+                        System.out.println("Terima kasih telah menggunakan AutoCare System!");
+                        isRunning = false;
+                        break;
+
+                    default:
+                        System.out.println("Pilihan tidak valid. Silakan masukkan angka 1-5.");
+                        break;
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("\n[FATAL ERROR] Input tidak valid! Anda harus memasukkan angka.");
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("\n[ERROR SISTEM] Terjadi kegagalan: " + e.getMessage());
             }
         }
         scanner.close();

@@ -1,10 +1,13 @@
 package com.mycompany.projectoop;
 
-public class Motor extends Kendaraan {
+public class Motor extends Kendaraan implements DapatGaransi {
     private String tipeTransmisi;
 
-    public Motor(String platNomor, String pemilik, int tahun, String tipeTransmisi) {
+    public Motor(String platNomor, String pemilik, int tahun, String tipeTransmisi) throws Exception {
         super(platNomor, pemilik, tahun);
+        if (tipeTransmisi.isEmpty()) {
+            throw new Exception("Tipe transmisi harus punya inisialisasi!");
+        }
         this.tipeTransmisi = tipeTransmisi;
     }
 
@@ -25,6 +28,16 @@ public class Motor extends Kendaraan {
 
     @Override
     public void layananServis() {
-        System.out.println("-> Layanan: Servis CVT/Rantai, ganti oli mesin, dan pembersihan karbu/injeksi.");
+        System.out.println("-> Layanan: Servis CVT/Rantai, ganti oli mesin, dan pembersihan injeksi.");
+    }
+
+    @Override
+    public void hitungEstimasiBiayaServis() {
+        System.out.println("   [Biaya] Estimasi Servis Motor: Rp 250.000");
+    }
+
+    @Override
+    public void klaimGaransi(int hari) {
+        System.out.println("   [Garansi] Kategori Motor mendapatkan garansi servis selama " + hari + " hari.");
     }
 }
