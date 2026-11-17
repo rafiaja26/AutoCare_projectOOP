@@ -1,6 +1,9 @@
 package com.mycompany.projectoop;
 
-public abstract class Kendaraan {
+import java.io.Serializable;
+
+public abstract class Kendaraan implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String platNomor;
     private String pemilik;
     private int tahun;

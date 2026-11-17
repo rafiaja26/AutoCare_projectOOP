@@ -1,5 +1,8 @@
 package com.mycompany.projectoop;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class TransaksiServis {
     public static void prosesTransaksi(Pelanggan pelanggan, Kendaraan kendaraan) {
         System.out.println("\n===== STRUK TRANSAKSI SERVIS AUTOCARE =====");
@@ -18,5 +21,12 @@ public class TransaksiServis {
             ((DapatGaransi) kendaraan).klaimGaransi(30);
         }
         System.out.println("===========================================");
+
+        try (FileWriter pipaTulis = new FileWriter("log_servis.txt", true)) {
+            String log = "Pelanggan: " + pelanggan.getNama() + " | Plat: " + kendaraan.getPlatNomor() + " | Pemilik: " + kendaraan.getPemilik() + "\n";
+            pipaTulis.write(log);
+        } catch (IOException e) {
+            System.out.println("Peringatan: Gagal menulis log transaksi ke file. " + e.getMessage());
+        }
     }
 }

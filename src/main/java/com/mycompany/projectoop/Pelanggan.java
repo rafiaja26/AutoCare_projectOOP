@@ -1,6 +1,9 @@
 package com.mycompany.projectoop;
 
-public class Pelanggan {
+import java.io.Serializable;
+
+public class Pelanggan implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String idKtp;
     private String nama;
 

@@ -11,6 +11,8 @@ public class AutoCareApp {
         Bengkel autoCareStudio = new Bengkel("AutoCare Service Studio");
         autoCareStudio.bukaBengkel();
 
+        autoCareStudio.muatDataDariFile();
+
         boolean isRunning = true;
 
         System.out.println("==============================================");
@@ -24,8 +26,9 @@ public class AutoCareApp {
             System.out.println("3. Cari Kendaraan");
             System.out.println("4. Kelola Pelanggan");
             System.out.println("5. Peminjaman / Servis (Demo Association)");
-            System.out.println("6. Keluar");
-            System.out.print("Pilih Menu: 1-6: ");
+            System.out.println("6. Baca File Log Servis (Demo File I/O Teks)");
+            System.out.println("7. Simpan & Keluar");
+            System.out.print("Pilih Menu: 1-7: ");
 
             try {
                 int pilihan = scanner.nextInt();
@@ -126,6 +129,12 @@ public class AutoCareApp {
                     }
 
                     case 6 -> {
+                        autoCareStudio.bacaLogServis();
+                    }
+
+                    case 7 -> {
+                        System.out.println("Menyimpan sesi ke database internal...");
+                        autoCareStudio.simpanDataKeFile();
                         System.out.println("Terima kasih telah menggunakan AutoCare Service System!");
                         isRunning = false;
                     }
